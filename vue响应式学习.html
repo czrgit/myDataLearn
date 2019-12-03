@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    //1.修改数据时，vue内部是怎样监听obj里的name数据发生改变的
+    //Object.defineProperty()监听对象属性的改变
+    //2.当数据发生改变时，Vue是如何知道通知那一些人，界面发生更新的
+    //订阅发布模式
+    const obj = {
+        message: '哈哈哈',
+        name: 'zhangsan'
+    }
+
+    //监听值的获取和修改
+
+    Object.keys(obj).forEach(key => {
+        let value = obj[key]
+        Object.defineProperty(obj, key, {
+            set(newValue){
+                dep.notify()
+                // console.log('监听改变' + key+':'+newValue);
+                value = newValue
+            },
+            get(){
+                // console.log('获取' + key+':'+value);
+                const w1 = new Weather(key)
+                dep.addSub(w1)
+                console.log(dep,w1);
+                return value
+            }
+        })
+    })
+    //发布者订阅者
+    class Dep{
+        constructor(){
+            this.subs = []//保存订阅的属性
+        }
+
+        addSub(weather){
+            this.subs.push(weather)
+        }
+
+        notify(){
+            this.subs.forEach(item=>{
+                item.update()
+            })
+        }
+    }
+    class Weather{
+        constructor(name){
+            this.name = name
+        }
+        update(){
+            console.log(this.name + 'update');
+        }
+    }
+    const dep = new Dep()
+</script>
+</body>
+</html>
