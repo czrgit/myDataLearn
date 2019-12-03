@@ -55,6 +55,7 @@ class LinkedList {
             }
             newNode.next = current
             previous.next = newNode
+
         }
 
         //4.length加一
